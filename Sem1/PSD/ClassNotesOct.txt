@@ -1,0 +1,149 @@
+05/10/2021
+1. ClassNotes :
+    Friday, 10/8
+       Exam 1 review session 2-3pm
+    Monday, 10/9
+        Exam 1 review session 10:30-11:30am
+        Exam 1 released on Canvas at 5:00pm
+    Tuesday, 10/10
+        No formal class
+        Exam 1 must be completed by 5pm
+        Sami will be available at the class Zoom link during the class time 
+
+14/10/2021
+1. Testing
+    - EACH TEST SHOULD TEST JUST ONE CASE!!!
+    - White box testing[some knowledge of what's happening under the hood] | Black Box Testing[no idea what the program is doing, e.g. WebServer testing]
+    - System Testing :
+        - E.g. Project0 testing 
+
+    - Unit Testing :
+        - Testing individual component of the program and falls under the category of White-Box testing.
+
+    - Integration testing :
+        - Testing how the components work together and falls under the category of White Box Testing.
+        
+    - Code : EmailPaser.java 
+    - JUnit :
+        * @Test
+          void testfnTest(){assert.True();}    // assertTrue : checks if it's true, assertEquals() : compare two values. 
+
+21/10/2021
+1. URL(Uniform Resource Locator) and URI(Uniform Resource Identifier)
+2. Steps(Requesting a webpage) :
+    - Hostname to IP Addr Mapping(DNS)
+    - IPv4(max [0-255].[0-255].[0-255].[0-255])
+    - Making multiple requests(via ) to reach to the Server.[Project 3 - GET / POST]
+    - Decoding the request made by the client [Read RFC for request Body].
+        * Understanding Request Body, HTTP 1.1, TCP, 
+        "GET /path/to/file HTTP/1.1
+         Host: www.url.com 
+         Connection: close"
+
+    - Get the response from the server.
+        "HTTP/1.1 200 OK
+         *(HEADERS) <NEWLINE>
+         <NEWLINE>
+         BODY
+         "
+
+    - Points 2nd and 3rd in Project3, Revising HTML
+3. Refer 'HTTPFetcher.java' | 'FileServer.java', making "GET" and POST request.
+    - HttpRequest request = HttpRequest.newBuilder();
+    - FileServer :
+        * Threads to handle multiple requests.
+        * Error handling <73-80>
+        * Paths.get("."+path) -> . refers to 'here!!!' and open say ./files/filename
+        * Implementing HTTPConstants along with ServerUtils
+        * 
+
+
+
+3. Project 3:
+    - Implement '/find' 
+    - POST request 
+        "POST /find HTTP/1.1
+         Host: localhost:1024
+         Connection: close 
+         Content-length: 10
+
+         asin=12345"
+
+    - e.g. "https://www.google.com/search?q=computer+science & source=dfdf..." # : particular location on page, 
+     '&' : differeent parameter lists.
+    - <!DOCTYPE html>
+      <html xmlns="https://www.w3.org/1999/xhtml">
+
+    - PART 4 
+        * JSOUP
+
+    - apache log4j for Logging!
+
+[26/10/2021]
+1. Read microcloud.md <for stargate server>
+2. Connection :
+    - ssh -L 9000:mcvm001.cs.usfca.edu:8080 srollins@stargate.cs.usfca.edu 
+    - rusers -a <all users available>
+    - ssh to that machine. curl "http://machine:80/reviewsearch"
+    - Setting up a tunnel :
+        - ssh -L 9000:mcvm001.cs.usfca.edu:8080 srollins@stargate.cs.usfca.edu 
+            * redirect traffic from 8080 port on my localhost:9000 via stargate.
+
+    - Here is an example of how I would use scp from the command line to copy example.jar from my local 
+    system to my home directory and save it in a file named example.jar in a directory named /cs514:
+        $ scp example.jar srollins@stargate.cs.usfca.edu:cs514/example.jar
+
+3. EchoServer.java -> Jetty (web api) implementation example
+4. Webservices :
+    - API allow us to allow information access on web using HTTP programmatically. 
+    - SOAP vs REST(Represental State Transfer)[Everthing happens on the URL!!! and returns a JSON]
+    - Idea with REST is that everything on the web is a resource - Create(POST), delete(DELETE), Access(GET) or Update(PUT) a rsrc.
+    - For Project 3 using slack API.[api.slack.com]
+    - Token :
+        GET /api/conversation.list HTTP/1.1
+        Authorization : Bearer <TOKEN>
+        Host : slack.com
+        Connection : close
+    - Using postman for the same.
+    - Using curl :  token=$(cat token.txt)
+                    curl <url> 
+5. REST api :
+    - Different approaches : 
+        * POST /api/createUser  or GET api/updateUser
+        * GET /api/users/{id}/find | POST /api/users/create | POST /api/users/{id}/update [more restful as compared to the first one]
+        * GET /api/users/{id} or POST /api/users or PUT /api/users/{id}  [more restful as the method 'POST', 'GET','PUT' already entails the task that we want to do.] 
+         
+
+02/11/2021 :
+1. Executing JAR file for 2 mains :
+    - java -jar myjar.jar [suppose m1, m2 are 2 main classes]
+    - nohup java -cp myjar.jar m1 & (using this to execute 2 different m1 & m2 to take care of it).
+        * '&' makes it run in the background
+        * 'nohup' keeps it running even after I disconnect it.
+
+2. Testing :
+    - /reviewsearch 
+        * GET /reviewsearch returns 200 OK | HTML is well formed - closing tags(HTML Validator, web->utils) | HTML contains <form> element
+        * HTTPFetcher.java [for checking in status code]
+        * POST /reviewsearch MALFORMED BODY(400 Bad request)
+        * GET /otherpath 405 : Method not found.
+
+3. Cookies :
+    - Set of 'string' browser generates, and the browse stores the string locally, and everytime I make a connection again with the same
+     server it uses cookie to login. [READ AGAIN]
+    - Check for GoodNotes!
+
+
+-> cmds 
+$ ssh skendre@stargate.cs.usfca.edu
+$ ssh mcvm031
+-> Upload the latest jar file 
+$ scp project3-shriawesome.jar skendre@stargate.cs.usfca.edu:project3/project3.jar
+$ ssh -L 9000:mcvm031.cs.usfca.edu:9090 skendre@stargate.cs.usfca.edu
+
+-> Running the server
+$ nohup java -cp project3.jar cs601.project3.chat.ChatServer &
+
+
+Testing :-
+curl -v "http://localhost:9000/find"

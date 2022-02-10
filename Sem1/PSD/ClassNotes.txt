@@ -1,0 +1,249 @@
+1. Static : 
+    1. no need for Class instantiation
+    2. Whatever ip they take, then return the result, without any other parameters. E.g. abs(x)
+2. Encapsulation :
+    1. Private members -> accessible via getters(methods to access members)
+    2. E.g. User class with variables say username and password, where username would be fixed(hidden), then thus password can be changed.
+    3. Deep Copy and Shallow Copy ?
+    4. Private Data Members !!!
+3. HashMap vs Tree :
+    1. O(1)*n - To insert ’n’ words, log n * 1 - Tree
+
+Zoom Class on Java
+1. Best way to declare a variable is String str; over String str=‘ ’; [as it won’t store any data  initially as compared with later and just the pointer/ reference]
+2. Map(interface) -> Implements HashMap | TreeMap
+3. Difference btw interface, Abstract Class and Class 
+    1. Interface just contains the method but not how it’ll be implemented and it can not be instantiated.
+    2. Abstract Class : Detail description about how the method would be implemented
+    3. Class : Its object can be instantiated and can be used.
+4. While declaring a variable, keeping it as generic as possible is useful as later its implementation can be different
+    1. - Private Map<String, User> users;
+    2. - If sorted then users=new TreeMap<>(); else users=new HashMap()  // TreeMap comes with a cost !!!
+5. Try - Catch : 
+    1. Anything written within ‘()’[including multiple steps], would eventually close the resources automatically whereas if written within ‘{}’ , resources needs to be closed manually. E.g. FileWriter wtr, wtr.close();
+6. Not a good practise to use throws for the main method. E.g. public void saveDB(String fname) throws FileNotFoundException(){} 
+
+31/08/2021
+1. When to use Inner Class :
+    1. LL class and Node class, when you use the supporting class only inside the Outer-class.
+    2. If two values are tightly coupled and needs to be only used inside the class.
+
+
+SEPTEMBER 
+02/09/21
+1. int vs Integer 
+    - "Integer" is the object, i.e. every primitive type has a wrapper around them i.e. int -> Integer.
+2. List vs int<any other primitive type>
+    - Anything apart from primitive dt returns a reference for the object in place of value. Thus for anything apart from primitive type it returns reference to the object.
+    - E.g. <Check the iPad notes>
+    - Soln : 
+        * return the referene of the copy of the list in place of the reference to the original list.
+        * Soln could be this, but comes at cost that it only works if the data inside is the primitive type else, if we have list of references
+        it's still not safe !!!
+        public List<Integer> getData(){
+            List<Integer> returnList = new ArrayList<>();
+            for(int i:myVariable){returnList.add(i);}
+            return returnList;
+        }
+3. Use of "static" terms and why static can't access non-static members, eg on GNotes.
+4. "Final" Keyword:
+    - Once a value is assigned to it, it can't be changed later!!!
+    - final method can't be overriden and final class can't be extended !!!
+5. Inheritance
+    - Java doesn't allow multiple inheritance, i.e. we can extend class only once 
+    - E.g. 
+        public class Coffee extends Beverage{
+            public void Coffee(){
+                super(ounces);  // Call the constructor of the parent class
+            }
+        } 
+    - Dynamic binding : At run time, binds the Class to the type of the object and its method[if inherited method then refer to the updated method].
+
+
+07/09/2021
+
+- Feedback from Project 0
+    1. Exception -
+        - Exception -> IOException -> FileNotFoundException [Inheritance], while catching multiple exceptions FileNotFoundException has to be the first one,
+        bcoz if IOException is used prior to FileNotFoundException then it'll throw a compile error as the next catch block will never be used.
+        
+    2. 'while(True)' : Not a good practise and should be avoided !!!!
+    3. Variable and Method naming :
+
+- Assignment
+    1. make "InvertedIndex" ds as generic as possible
+    2. give a jar file for execution
+        * file -> project structure -> artifacts -> extract to JAR[Java Archive] file.
+
+1. Compile code 
+    - For error "Class not found!!!"
+        * $ java -cp target/classes/className
+
+2. Design Pattern :
+    * Creational 
+        - Singelton Pattern :
+            - have a class and gurantee than you'll never have more than 1 instance of that class.
+            - Also think about the attributes that comes within it, which can only have single value.
+            - checkout code DBManager. (not thread safe!!!) 
+        
+        - Factory Pattern :
+        
+        - Builder Pattern:
+            - Large data members in the class with optional parameters.
+            - In place of having all parameters in the constructor call the "SET" methods for specific parameters only.
+            - E.g. checkout 'GraphBuilder' 
+            
+    * Behavioural 
+        - 
+    * Structural
+
+
+09/09/2021
+1. Design Pattern
+    - Decorator Pattern:
+        - Diff between subclass[extends] and decorator[Implements] :
+            * is-a relationship | has-a relationship, 
+    - Visitor Pattern 
+    - Observer Pattern
+        * e.g. button listener etc.[on performing certain actions] 
+
+2. Threads
+    - Thread class would have an input something that is "Runnable".['InfinitePrinter' - code]
+    - Critical section : part of program that is shared among threads.
+    
+
+14/09/2021
+1. Threads :
+    - HashMaps are not thread safe!!! code e.g. with sharedDataStructure class using HashMap DS Threads adding values to a DS.
+    - Handling using "synchronised" Keyword
+        - puts a lock on a shared resource until 1 of the thread is completely executed.
+        - But this doesn't help in concurrent read operation to take place!!!
+            - can be handled via using readLock()/ writeLock()
+            - Implementing Lock ["try-finally" implementation]
+    
+21/09/2021
+1. Project 2:
+    - e.g. Apache Kafka[confluent.io]
+2. Threads :
+    - Ask about the granularity of the task[in context to Project1, either for separate files or for some count of records]
+    - Continue ... [14/09/2021]
+    - "this.lock.writeLock().lock()" - blocking method, "tryLock()"- non-blocking method.
+    - Dizzy Method[while without statements] vs this.wait()
+    - synchronised - scenario for mutiple threads accessing say lock()!!!. 
+        - e.g. 
+            public synchronised void lock(){
+            while(isHeld){
+                try{
+                    this.wait(); // thread 2 and thread 3.
+                }
+            }
+            isHeld=true;
+            }
+
+    - Acquire Read Lock()
+        - acquireRead
+            while(writers!=null){
+                this.wait();
+            }
+            add current thread to the list of readers
+
+        - releaseWrite()
+            if (current thread is not the active writer)
+                throw exception
+            writer=null    // there will be no multiple writers
+            notifyAll() 
+        
+        [notifyAll - all the reader threads are notified and can read the data]
+    
+    - Multiple threads and Runnable objects :
+        - Threads -> [t1,t2,t3,t4,t5,t6]   Runnables = [r1,r2,r3,r4,r5,r6,r7] | t1-t6 will pick up each runnable task and after t1
+        finishes looks for another runnables!!!
+        - 'ExecutorService' :
+            - threadPool.execute() : pulls the runnable object from Runnables and execute.
+            - threadPool.shutdown() : no new tasks to be added in the 'Runnables'
+            - threadPool.awaitTermination()[catch(InterruptedException e)] : wait until all jobs are done i.e. Runnables=null.
+
+
+23/09/21
+1. Threads -
+    - Working of ThreadPool :
+        - ExecutorService threadPool=Executors.newFixedThreadPool(n=30);   // Creates 30 threads 
+        - threadPool.excute() :
+            - Pseudo code
+            public void execute(Runnable r){
+                if 
+                synchronized(queue){         // synchronised can work with methods(lock on object) / block of code(lock on data member) 
+                    queue.addLast();
+                    queue.notify();         // adding only 1 job thus need only one thread, hence not notifyAll()
+                }
+            }
+        
+        - thread.run() : Runs the runnables objects present in the queue
+            public void run(){
+                Runnable r;
+                while(running){             // 'running' checks if we are accepting jobs in the queue or not. 
+                    while(queue.isEmpty()){
+                        try{
+                        this.wait();
+                        }
+                        catch(){}
+                    }
+                }
+
+                r=(Runnable)queue.removeFirst();
+            }
+
+
+        - thread.shutdown() : 
+            private volatile boolean running;
+            public void shutdown(){
+                running = false;       // volatile(DT) : makes sure that the changes are readily visible to all threads as every thread has it's own cache memory 
+                                        // thus volatile makes the changes to that variable readily available everywhere and since it's a atomic operation it won't
+                                        // require synchronised() block
+            }
+
+2. Project 2:
+    - Subscriber<String> sub1=new SubcriberImplementation(); 
+    - Broker : 
+        - subscribe() : add subscribers to some list in the Broker [threadSafe]
+        - publish() : 
+            : iterati
+            Sync Order : thread would wait until the job is done, when called by a thread., iterate over subscribers list and complete sub.onEvent()
+            Async Unordered : thread.execute() , runnable Jobs for execution
+            Async Ordered :  Refer CS601/codeexample -> BlockingQueue 
+
+28/09/2021
+1. Project 2:
+    - In "Generics" we force tell what'll be type of object put in the queue at runtime.
+
+2. Networking 
+    - OSI Model (Application -> Presentation -> Session -> Transport -> )
+    - Application  Application(QUIC Protocol) -> Transport(UDP, TCP) -> Internet(IP) -> Link/DLL[Data Link Layer]/MAC[Media Access Control] -> Physical Layer
+    - Transport Layer(Transmission Control Protocol) :
+        a. E.g. SimpleServer.java, internal Java logging tool.
+        b. Code Block : 
+            ServerSocket server = null;
+            while (Running){
+                Socket skt=server.accept()
+                // either skt.inputStream or skt.outputStream
+            }
+
+        c. Client skt has to specify 2 things:
+            - Port to listen on
+            - Hostname of the server
+
+30/09/2021
+1. Sockets:
+    - Interface through which we can communicate between client and server.
+    - After connection there is a "connection stream"<Input Stream, Socket s=new Socket("localhost");s.getOutputStream()> to send and receive data.
+    
+    - <Project 2 : Have atleast 1 subscriber run as a server on different host>
+    - USF Servers : $ ssh stargate.cs.usfca.edu -> rusers 
+
+    - HTTP Protocol :
+        - "http irc"  e.g. $ telnet www.google.com 80(allows to open up a connection to the <host>), HTTP uses port "80" 
+            - GET / HTTP /1.1   |  GET : method, HTTP : Path to the data I want.
+            - returns header lines, along with the body of the returned values.    [HTTP /1.0 and HTTP/1.1]
+    - Implementation :
+        * Refer code HTTPFetcher.java 
+        * 

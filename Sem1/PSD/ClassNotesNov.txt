@@ -1,0 +1,142 @@
+ [04/11/2021]
+1. Slack login <Check GoodNotes and slides!>
+    - Code : JettyLoginServer -> example login !
+    - ngork (for publicly accessible URL that can direct traffic to localhost)
+    - refer to sign-in with slack documentation.
+    - info to the slack is provided in the URL.
+    - "myservice" exchanges a code for a token :<from slack API>
+        * code, clientId, clientSecret, redirect_uri
+        * In return slack sends the response with id_token, that later can be used for extracting 
+details.
+    - Gives the power to use slack's functionality,
+    - Steps :
+	1. Land on the landing servlet page and then click on button(sign with slack) 
+	2. On clicking[app makes a GET request] redirected to the URL, where I authenticate with Slack
+	3. Sign in flow ! Once authentication is done I'm sent back to my redirect_uri link.
+	4. Along with redirecting to the link, slack also sends some data that'll help identify our login status with slack.
+		* URL : https://<ourapp>.ngork.io/login?
+		  	code=3489348394839.343434<different from prev URL>&
+			state=node01exmssqdkfjlkasdj<same as prev URL, helps to identify that the interacting parties are the same>
+	5. We are landed back to the 601 app/login page.<step 6 in flow dgm>
+	6. The "code" from the URL(code, client_id, client_secret, redirect_uri) is then used to get a token(id_token)/ user info from slack and then the information returned by slack is responded back to us by the 601 App.
+    - Important URL Parameters :
+	-> URL : https://slack.com/openid/connect/authorize?
+		response_type=code&
+		scope=openid%20profile%20email&
+
+		client_id=2322323232.23232&
+		state=node01exmssqdkfjlkasdj&
+		nonce=0c4cdkasjdflajdfkjkljskdfj&
+		redirect_uri=https://<ourapp>.ngork.io/login
+	* client_id : extract from the slack page where I configured my slack app<on slack!>.
+	* redirect_uri : says you click on the link and you'll be redirected to slack and once done authenticating, you'll be redirected to cs601.
+	* response_type = code : used to be exchanged with the slack afterwards for the token.
+    - Refer to api.slack.com/authentication/sign-in-with-slack
+
+2. ServletContextHandler <LandlingServlet.java ! sharing the keys/ cookies>
+    - Share context to allow sharing of data/ objects.
+    - Cookies associated with Sessions
+
+[09/11/2021]
+1. Client/ Server Architecture:
+    - 3 tier architecture : [Presentation(Front-end Development), Logic(coordinates the application, processes commands, makes logical decision and evaluations 
+    and performs calculations), Data Tier]
+    - LAMP [Linux, Apache(web server), MySQL(database), PHP(language)]
+2. Relational Databases & SQL
+    - Basic command revision. 
+    - Accessing "sql.cs.usfca.edu"
+        - Using terminal
+            * $ ssh kudlick29
+            * $ mysql -h sql.cs.usfca.edu -u user050 -p
+            * $ -> password same as username.
+
+            * Using a tunnel and after connection use 127.0.0.1 in place of localhost!!!
+        - SequelPro
+            * Connect via ssh -> (Database name same as username)
+            
+[11/11/2021]
+1. Accessing "sql.cs.usfca.edu" 
+    - Via JDBC :
+        * config.json (no commit to GitHub)
+        * JDBCExample.java (make connection, insert values, Display contents from db)
+        * Before running the script start the sql server i.e. in case of micro-cloud create a tunnel.
+        * For inserting - "PreparedStatement(Precompiled, just need parameter values, much safer and avoid SQL injections e.g. 2 cmds taken together) vs Statement DS"
+        * For establishing connection : ConnectionPoolExample.java [to set connection outside the main logic/class]
+
+2. Monolithic Architecture :
+    - Single DB/ code base, 1 small change - redeploy entire thing, tight-coupling. E.g twitter 
+    - Advantages :
+	* Infrastructure simplicity -> up and running faster
+	* Code simplicity : Since everyone is working on the same code base hence won't have to worry about latency, timeouts, interaction level monitoring etc.
+	* Architecture : no hard boundaries, shared tech stack.	
+
+3. Microservice Architecture :
+    - Loosely-coupled - failure at one place might not impact other functionalities, choose Tech-stack specific for certain service[Prob : more overhead since each language needs automation].
+    - Advantages :
+	* System ownership : decoupled tech stacks, giving freedom for teams to decide tech stack(API contracts)
+	* Smaller components : easier to read and debug codes(learn)
+	* Separation of concerns : Isolation of faults from other services
+	* Scalable components without much interdependency
+    - Points for consideration :
+	* Separate code and data into modular components based on feature functionalities
+	* Services should own and control access to its data
+	* Data access should only happen through clearly defined API contracts.
+	* Note : DISTRIBUTED MONOLITH scenario : where data is accessed in a shared way and is a worst case scenario of both mono and micro-service architecture.
+     - Separating Data at GitHub 
+	* Functional Groups : Identify and map existing tables and abs into functional groups based on say repositories, users projects etc called as schema-domains.yml.
+	* Partition keys : Identify key for every functional groups
+     - Extracting services out of Monolith :
+	* Dependency should go from inside monolith -> outside monolith i.e. start from core services and then gradually move towards feature level.
+	* Remove old code paths once the new code path is up and running completely.
+	* Look for tight coupling i.e. services that share common data can be used for natural grouping.
+     _ Producer/ Consumer diff :
+	* Monolith usually means synchronous way of communication whereas micro-services implement asynchronous model for serving requests.
+	* Thus, a general idea for implementing asynchronous model can be via "Shared Event Bus" that's responsible for mapping requests from producers to consumers.
+
+     - Disadvantage :
+	* Super difficult to incorporate new programming languages and frameworks, super expensive : team size and the level of investment. 30000 engineer 1 prgm language per 4000 people!!!
+	* Publish an event and what's the guarantee that it's done? 
+	 
+
+mysql> DESCRIBE customers;
++-------+--------------+------+-----+---------+----------------+
+| Field | Type         | Null | Key | Default | Extra          |
++-------+--------------+------+-----+---------+----------------+
+| id    | int(11)      | NO   | PRI | NULL    | auto_increment |
+| name  | varchar(255) | YES  |     | NULL    |                |
+| email | varchar(100) | NO   |     | NULL    |                |
++-------+--------------+------+-----+---------+----------------+
+
+mysql> DESCRIBE orders;
++-------------+----------+------+-----+---------+----------------+
+| Field       | Type     | Null | Key | Default | Extra          |
++-------------+----------+------+-----+---------+----------------+
+| id          | int(11)  | NO   | PRI | NULL    | auto_increment |
+| customer_id | int(11)  | NO   | MUL | NULL    |                |
+| product_id  | int(11)  | NO   | MUL | NULL    |                |
+| order_time  | datetime | YES  |     | NULL    |                |
++-------------+----------+------+-----+---------+----------------+
+
+mysql> DESCRIBE products;
++-------------+--------------+------+-----+---------+----------------+
+| Field       | Type         | Null | Key | Default | Extra          |
++-------------+--------------+------+-----+---------+----------------+
+| id          | int(11)      | NO   | PRI | NULL    | auto_increment |
+| description | varchar(255) | YES  |     | NULL    |                |
++-------------+--------------+------+-----+---------+----------------+
+
+SELECT products.description FORM products JOIN orders ON products.id=orders.product_id WHERE orders.customer_id=(SELECT id from customers WHERE email="srollins@cs.usfca.edu")
+
+CREATE TABLE users (
+    userID int NOT NULL,
+    LastName varchar(255),
+    FirstName varchar(255),
+    PRIMARY KEY (userID)
+);
+
+
+
+
+
+
+
