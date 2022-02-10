@@ -1,0 +1,52 @@
+[25/01/2021]
+1. Raspberry pi:
+- Assign a fix ip from router to raspberypi
+- Assign a DNS
+- Components:
+    Raspberry pi, MicroSD card x 2(16Gb), SD card reader/writer, Power, case.
+
+2. Installation :
+- Raspberry pi OS 
+    - Check notes on https://cs631.cs.usfca.edu/projects/project01 
+    - Connect to 2.4GHZ network
+    - vim .ssh/known_hosts  [Verification failed(DNS snoofing) : clear the last host entry]
+    - 
+
+[27/01/2021]
+cmd line cmds : strace(all system calls), 
+1. C programming-
+    - C preprocessor, step before compiling. e.g. #include <stdio.h>
+    - Data[heap, stack, memory]
+    - Functions -> statements -> expressions
+    - int main(int argc, char *argv[])   char **argv
+    - printf() -> dynamic libraries(libc.so)[points to this file during compiling machine code]
+    - Data Declaration :
+        -> Global space, Stack(local variables), Heap (malloc & free) 
+- [Alias on raspberypi] check .bash_aliases file and add the alias
+- [from home]cd .config -> cd micro -> access to setting.json and binding.json[shortcut keys] 
+
+2. Scanner :
+    - "1+1" -> extract int values
+    - 1->INT, + -> plus, EBNF(Extended back.. Form)
+
+[02/01/2021]
+-> makefile :
+1. 'all :' sudo target, e.g. all : $(PROGS)
+2. % : %.c // rule
+    -> gcc -g -o $@ $<  // what needs to be done
+-> GDB:
+    - gcc -g 
+    - gdb <name of pgm to debug>
+    - (b 197) -> break point at 197
+    - (print *p)
+    -e.g. (r "123 +1")
+
+[02/03/2021]
+-> Project 2
+- Recursive descent parsing :
+    - scanning -> tokens -> parsing -> tree -> (eval | Compile)
+    - Goal Parsing i.e. to generate trees :
+        - "1 + 2" -> scan table TK_INTLIT("1"),TK_PLUS("+"), TK_INTLIT("2")  [Tokens]
+        - Generate tree, rootnode(+) : leftnode(1), rightnode(2)
+        - e.g. (1+2)+3 -> rootnode(+) : lnode(+)[->lnode(1),rnode(2)],rnode(3)
+        - No "TOKEN_PAREN" as tree itself represents grouping.
